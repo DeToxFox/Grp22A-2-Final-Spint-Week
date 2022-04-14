@@ -6,19 +6,38 @@
 
 import datetime as dt
 
-# Add Values From Defaults File To Variables
-with open("defaults.dat", "r") as f:
-    NEXT_TRANS_NUM = int(f.readline())
-    NEXT_DRIVER_NUM = int(f.readline())
-    MON_STAND_FEE = float(f.readline())
-    DAILY_RENT = float(f.readline())
-    WEEKLY_RENT = float(f.readline())
-    TAX_RATE = float(f.readline())
+# # Add Values From Defaults File To Variables
+# with open("defaults.dat", "r") as f:
+#     NEXT_TRANS_NUM = int(f.readline())
+#     NEXT_DRIVER_NUM = int(f.readline())
+#     MON_STAND_FEE = float(f.readline())
+#     DAILY_RENT = float(f.readline())
+#     WEEKLY_RENT = float(f.readline())
+#     TAX_RATE = float(f.readline())
+
+def test():
+    all_def = []
+    with open("defaults.dat", "r") as f:
+        for line in f:
+            all_def.append(line.replace("\n",""))
+    print(all_def)
+    print(*all_def)
+    print("Printing index 4", all_def[4])
 
 
 def new_emp():
+
     # Get Driver Number From Defaults
-    driverNum = NEXT_DRIVER_NUM
+    # driverNum = defaults_file(NEXT_DRIVER_NUM)
+
+    # Add Values From Defaults File To Variables
+    with open("defaults.dat", "r") as f:
+        NEXT_TRANS_NUM = int(f.readline())
+        NEXT_DRIVER_NUM = int(f.readline())
+        MON_STAND_FEE = float(f.readline())
+        DAILY_RENT = float(f.readline())
+        WEEKLY_RENT = float(f.readline())
+        TAX_RATE = float(f.readline())
 
     # Input Driver's First Name
     while True:
@@ -165,21 +184,32 @@ def new_emp():
         balDue = WEEKLY_RENT
         car = "Weekly Rent"
 
+    NEXT_TRANS_NUM += 1  # this is not appended below so it wont update
+    NEXT_DRIVER_NUM += 1 # this now updates 1 at a time
+
+    with open("defaults.dat", "w") as f:
+        f.write("{}\n".format(str(NEXT_TRANS_NUM)))
+        f.write("{}\n".format(str(NEXT_DRIVER_NUM)))
+        f.write("{}\n".format(str(MON_STAND_FEE)))
+        f.write("{}\n".format(str(DAILY_RENT)))
+        f.write("{}\n".format(str(WEEKLY_RENT)))
+        f.write("{}\n".format(str(TAX_RATE)))
+
     # Append All Inputs And Calculations For Driver Into "employee.dat" File
     with open("employees.dat", "a") as f:
-        f.write("{},".format(str(NEXT_DRIVER_NUM)))
-        f.write("{},".format(driverFirstName))
-        f.write("{},".format(driverLastName))
-        f.write("{},".format(stAdd))
-        f.write("{},".format(city))
-        f.write("{},".format(prov))
-        f.write("{},".format(postCode))
-        f.write("{},".format(phoneNum))
-        f.write("{},".format(driverLicenseNum))
-        f.write("{},".format(str(licenseExpiry)))
-        f.write("{},".format(insurPolComp))
-        f.write("{},".format(policyNum))
-        f.write("{},".format(car))
+        f.write("{}, ".format(str(NEXT_DRIVER_NUM)))
+        f.write("{}, ".format(driverFirstName))
+        f.write("{}, ".format(driverLastName))
+        f.write("{}, ".format(stAdd))
+        f.write("{}, ".format(city))
+        f.write("{}, ".format(prov))
+        f.write("{}, ".format(postCode))
+        f.write("{}, ".format(phoneNum))
+        f.write("{}, ".format(driverLicenseNum))
+        f.write("{}, ".format(str(licenseExpiry)))
+        f.write("{}, ".format(insurPolComp))
+        f.write("{}, ".format(policyNum))
+        f.write("{}, ".format(car))
         f.write("{}\n".format(str(balDue)))
 
     # Driver Dsp
@@ -251,16 +281,16 @@ while True:
     #         f.write("{},".format(str(tax)))
     #         f.write("{},".format(str(total)))
 
-    NEXT_TRANS_NUM += 1
-    NEXT_DRIVER_NUM += 1
+    # NEXT_TRANS_NUM += 1
+    # NEXT_DRIVER_NUM += 1
 
-    with open("defaults.dat", "w") as f:
-        f.write("{}\n".format(str(NEXT_TRANS_NUM)))
-        f.write("{}\n".format(str(NEXT_DRIVER_NUM)))
-        f.write("{}\n".format(str(MON_STAND_FEE)))
-        f.write("{}\n".format(str(DAILY_RENT)))
-        f.write("{}\n".format(str(WEEKLY_RENT)))
-        f.write("{}\n".format(str(TAX_RATE)))
+    # with open("defaults.dat", "w") as f:
+    #     f.write("{}\n".format(str(NEXT_TRANS_NUM)))
+    #     f.write("{}\n".format(str(NEXT_DRIVER_NUM)))
+    #     f.write("{}\n".format(str(MON_STAND_FEE)))
+    #     f.write("{}\n".format(str(DAILY_RENT)))
+    #     f.write("{}\n".format(str(WEEKLY_RENT)))
+    #     f.write("{}\n".format(str(TAX_RATE)))
 
     # Main
 
@@ -294,6 +324,8 @@ while True:
         pr_comp_profit_tbl()
     elif Choice == "7":
         pr_comp_dr_fin_tbl()
+    elif Choice == "77":
+        test()
     elif Choice == "8":
         print("Thank you for utilizing the \"Company Services System\", have a wonderful day.")
         break
