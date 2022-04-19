@@ -260,14 +260,28 @@ def record_emp_payment():
 
 
 def pr_comp_profit_tbl():
+    
     totalRevAcc = 0
     totalExpenAcc = 0
 
-    startDate = input("Enter Start Date: ")
-    startDate = dt.datetime.strptime(startDate, "%Y-%m-%d")
+   while True:
+    try:
+        startDate = input("Enter Start Date: ")
+        startDate = dt.datetime.strptime(startDate, "%Y-%m-%d")
+    except:
+        print("Invalid Date - Please Re-Enter")
+    else:
+        break
 
-    endDate = input("Enter End Date: ")
-    endDate = dt.datetime.strptime(endDate, "%Y-%m-%d")
+while True:
+    try:
+        endDate = input("Enter End Date: ")
+        endDate = dt.datetime.strptime(endDate, "%Y-%m-%d")
+    except:
+        print("Invalid Date - Please Re-Enter")
+    else:
+        break
+        
 
     print()
     print("                                               HAB Taxi Services")
