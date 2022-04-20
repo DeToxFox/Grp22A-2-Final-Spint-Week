@@ -1,3 +1,4 @@
+
 # HAB Taxi Services
 
 # Written by: Group 22A-2, Makenzie Roberts, Tyler Dinn, Eoin Hurley, and David Turner
@@ -11,30 +12,18 @@ def Dollar(num):
     dollar = "${:,.2f}".format(num)
     return dollar
 
-# Add Values From Defaults File To Variables
-# with open("defaults.dat", "r") as f:
-#     NEXT_TRANS_NUM = int(f.readline())
-#     NEXT_DRIVER_NUM = int(f.readline())
-#     MON_STAND_FEE = float(f.readline())
-#     DAILY_RENT = float(f.readline())
-#     WEEKLY_RENT = float(f.readline())
-#     TAX_RATE = float(f.readline())
 
-# def test():
-#     all_def = []
-#     with open("defaults.dat", "r") as f:
-#         for line in f:
-#             all_def.append(line.replace("\n",""))
-#     print(all_def)
-#     print(*all_def)
-#     print("Printing index 4", all_def[4])
+# Add Values From Defaults File To Variables
+with open("defaults.dat", "r") as f:
+    NEXT_TRANS_NUM = int(f.readline())
+    NEXT_DRIVER_NUM = int(f.readline())
+    MON_STAND_FEE = float(f.readline())
+    DAILY_RENT = float(f.readline())
+    WEEKLY_RENT = float(f.readline())
+    TAX_RATE = float(f.readline())
 
 
 def new_emp():
-
-    # Get Driver Number From Defaults
-    # driverNum = defaults_file(NEXT_DRIVER_NUM)
-
     # Add Values From Defaults File To Variables
     with open("defaults.dat", "r") as f:
         NEXT_TRANS_NUM = int(f.readline())
@@ -190,7 +179,7 @@ def new_emp():
         car = "Weekly Rent"
 
     NEXT_TRANS_NUM += 1  # this is not appended below so it wont update
-    NEXT_DRIVER_NUM += 1 # this now updates 1 at a time
+    NEXT_DRIVER_NUM += 1  # this now updates 1 at a time
 
     with open("defaults.dat", "w") as f:
         f.write("{}\n".format(str(NEXT_TRANS_NUM)))
@@ -260,28 +249,28 @@ def record_emp_payment():
 
 
 def pr_comp_profit_tbl():
-    
     totalRevAcc = 0
     totalExpenAcc = 0
+    tranCounter = 0
+    invoiceCounter = 0
 
-   while True:
-    try:
-        startDate = input("Enter Start Date: ")
-        startDate = dt.datetime.strptime(startDate, "%Y-%m-%d")
-    except:
-        print("Invalid Date - Please Re-Enter")
-    else:
-        break
+    while True:
+        try:
+            startDate = input("Enter Start Date: ")
+            startDate = dt.datetime.strptime(startDate, "%Y-%m-%d")
+        except:
+            print("Invalid Date - Please Re-Enter")
+        else:
+            break
 
-while True:
-    try:
-        endDate = input("Enter End Date: ")
-        endDate = dt.datetime.strptime(endDate, "%Y-%m-%d")
-    except:
-        print("Invalid Date - Please Re-Enter")
-    else:
-        break
-        
+    while True:
+        try:
+            endDate = input("Enter End Date: ")
+            endDate = dt.datetime.strptime(endDate, "%Y-%m-%d")
+        except:
+            print("Invalid Date - Please Re-Enter")
+        else:
+            break
 
     print()
     print("                                               HAB Taxi Services")
@@ -311,6 +300,7 @@ while True:
             transDateDsp = dt.datetime.strptime(transDate, "%Y-%m-%d")
 
             if transDateDsp >= startDate and transDateDsp <= endDate:
+                tranCounter += 1
                 # Total Revenue
                 totalRevAcc += revTotal
                 totalRevAccDsp = Dollar(totalRevAcc)
@@ -323,8 +313,9 @@ while True:
                                                                                                               revTaxDsp,
                                                                                                               revTotalDsp))
         print("======================================================================================================")
-        print("                                                                            TOTAL REVENUE: {:>9}".format
-              (totalRevAccDsp))
+        print(
+            "TOTAL TRANSACTIONS: {:<3}                                                       TOTAL REVENUE: {:>9}".format
+            (tranCounter, totalRevAccDsp))
 
         print()
 
@@ -354,6 +345,7 @@ while True:
             invoiceDateDsp = dt.datetime.strptime(invoiceDate, "%Y-%m-%d")
 
             if invoiceDateDsp >= startDate and invoiceDateDsp <= endDate:
+                invoiceCounter += 1
                 # Total Expenses
                 totalExpenAcc += expenTotal
                 totalExpenAccDsp = Dollar(totalExpenAcc)
@@ -376,8 +368,8 @@ while True:
 
     print("========================================================================================================")
     print(
-        "                                                                                TOTAL EXPENSES: {:<9}".format(
-            totalExpenAccDsp))
+        "TOTAL INVOICES: {:<3}                                                             TOTAL EXPENSES: {:<9}".format(
+            invoiceCounter, totalExpenAccDsp))
     print()
     print("*********************************************************************************************************")
     print("                                                                                 Profit/Loss: {:>9}".format(
@@ -386,7 +378,81 @@ while True:
 
 
 def pr_comp_dr_fin_tbl():
-    print("Print Driver Financial Listing/Table")
+    amtAcc = 0
+    HSTAcc = 0
+    totalAcc = 0
+    tranCounter = 0
+
+    driveNum = input("Enter the Driver's Number: ")
+
+    while True:
+        try:
+            startDate = input("Enter Start Date: ")
+            startDate = dt.datetime.strptime(startDate, "%Y-%m-%d")
+        except:
+            print("Invalid Date - Please Re-Enter")
+        else:
+            break
+
+    while True:
+        try:
+            endDate = input("Enter End Date: ")
+            endDate = dt.datetime.strptime(endDate, "%Y-%m-%d")
+        except:
+            print("Invalid Date - Please Re-Enter")
+        else:
+            break
+
+    print()
+    print("                             HAB Taxi Services")
+    print("                          Driver Financial Listing")
+    print()
+    print("From: {}".format(startDate.strftime("%Y-%m-%d")))
+    print("To:   {}".format(endDate.strftime("%Y-%m-%d")))
+    print()
+    print("   Tran.       Tran.                   ")
+    print("   Date         ID         Desc.          Amount         HST         Total    ")
+    print("============================================================================")
+
+    with open("revenues.dat", "r") as f, open("expenses.dat", "r") as e:
+        # Revenue File
+        for revDataLine in f:
+            revLine = revDataLine.split(", ")
+            transID = revLine[0].strip()
+            transDate = revLine[1].strip()
+            revDesc = revLine[2].strip()
+            revDriverNum = revLine[3].strip()
+            revAmt = float(revLine[4].strip())
+            revTax = float(revLine[5].strip())
+            revTotal = float(revLine[6].strip())
+
+            # Dsp For Revenue File
+            revAmtDsp = Dollar(revAmt)
+            revTaxDsp = Dollar(revTax)
+            revTotalDsp = Dollar(revTotal)
+            transDateDsp = dt.datetime.strptime(transDate, "%Y-%m-%d")
+
+            if driveNum == revDriverNum and transDateDsp >= startDate and transDateDsp <= endDate:
+                tranCounter += 1
+                # Amount, HST, and Total Accumulators
+                amtAcc += revAmt
+                HSTAcc += revTax
+                totalAcc += revTotal
+
+                # Dsp For Accumulators
+                amtAccDsp = Dollar(amtAcc)
+                HSTAccDsp = Dollar(HSTAcc)
+                totalAccDSp = Dollar(totalAcc)
+
+                print("{:<10}     {:<3}   {:>10} {:>9}       {:>6}     {:>9}".format(transDate, transID, revDesc,
+                                                                                     revAmtDsp,
+                                                                                     revTaxDsp, revTotalDsp))
+
+        print("============================================================================")
+        print("TOTAL TRANSACTIONS: {:<2}                  {:>9}    {:>9}     {:>9}".format
+              (tranCounter, amtAccDsp, HSTAccDsp, totalAccDSp))
+
+        print()
 
 
 while True:
@@ -407,10 +473,10 @@ while True:
     #         f.write("{},".format(str(MON_STAND_FEE)))
     #         f.write("{},".format(str(tax)))
     #         f.write("{},".format(str(total)))
-
+    #
     # NEXT_TRANS_NUM += 1
     # NEXT_DRIVER_NUM += 1
-
+    #
     # with open("defaults.dat", "w") as f:
     #     f.write("{}\n".format(str(NEXT_TRANS_NUM)))
     #     f.write("{}\n".format(str(NEXT_DRIVER_NUM)))
@@ -451,8 +517,6 @@ while True:
         pr_comp_profit_tbl()
     elif Choice == "7":
         pr_comp_dr_fin_tbl()
-    # elif Choice == "77":
-    #     test()
     elif Choice == "8":
         print("Thank you for utilizing the \"Company Services System\", have a wonderful day.")
         break
