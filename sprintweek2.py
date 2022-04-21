@@ -1,4 +1,3 @@
-
 # HAB Taxi Services
 
 # Written by: Group 22A-2, Makenzie Roberts, Tyler Dinn, Eoin Hurley, and David Turner
@@ -253,10 +252,13 @@ def pr_comp_profit_tbl():
     totalExpenAcc = 0
     tranCounter = 0
     invoiceCounter = 0
+    monFeeCounter = 0
+    dailyFeeCounter = 0
+    weekFeeCounter = 0
 
     while True:
         try:
-            startDate = input("Enter Start Date: ")
+            startDate = input("Enter Start Date (YYYY-MM-DD): ")
             startDate = dt.datetime.strptime(startDate, "%Y-%m-%d")
         except:
             print("Invalid Date - Please Re-Enter")
@@ -265,11 +267,13 @@ def pr_comp_profit_tbl():
 
     while True:
         try:
-            endDate = input("Enter End Date: ")
+            endDate = input("Enter End Date (YYYY-MM-DD): ")
             endDate = dt.datetime.strptime(endDate, "%Y-%m-%d")
         except:
             print("Invalid Date - Please Re-Enter")
         else:
+            if endDate < startDate:
+                print("End Date Can't Be Before The Start Date")
             break
 
     print()
@@ -300,6 +304,13 @@ def pr_comp_profit_tbl():
             transDateDsp = dt.datetime.strptime(transDate, "%Y-%m-%d")
 
             if transDateDsp >= startDate and transDateDsp <= endDate:
+                if revDesc == "Monthly Stand Fees":
+                    monFeeCounter += 1
+                elif revDesc == "Daily Rental Fees":
+                    dailyFeeCounter += 1
+                elif revDesc == "Weekly Rental Fees":
+                    weekFeeCounter += 1
+
                 tranCounter += 1
                 # Total Revenue
                 totalRevAcc += revTotal
@@ -312,10 +323,27 @@ def pr_comp_profit_tbl():
                                                                                                               revAmtDsp,
                                                                                                               revTaxDsp,
                                                                                                               revTotalDsp))
+            else:
+                tranCounter = 0
+                # Total Revenue
+                totalRevAcc += revTotal
+                totalRevAccDsp = Dollar(totalRevAcc)
+
+                print("            {:<10}      {:<3}       {:>4}     {:<10}   {:>9}      {:>6}  {:>9}".format(transDate,
+                                                                                                              transID,
+                                                                                                              revDriverNum,
+                                                                                                              revDesc,
+                                                                                                              revAmtDsp,
+                                                                                                              revTaxDsp,
+                                                                                                              revTotalDsp))
+
         print("======================================================================================================")
         print(
-            "TOTAL TRANSACTIONS: {:<3}                                                       TOTAL REVENUE: {:>9}".format
+            "TOTAL TRANSACTIONS: {:<3}                                                     TOTAL REVENUE:   {:<6}".format
             (tranCounter, totalRevAccDsp))
+        print("              Monthly Standard Trans: {:<3}   Daily Rent Trans: {:<3}  Weekly Rent Trans: {:>3}".format(
+            monFeeCounter, dailyFeeCounter, weekFeeCounter))
+        print()
 
         print()
 
@@ -372,8 +400,9 @@ def pr_comp_profit_tbl():
             invoiceCounter, totalExpenAccDsp))
     print()
     print("*********************************************************************************************************")
-    print("                                                                                 Profit/Loss: {:>9}".format(
-        profitDsp))
+    print(
+        "                                                                                 Profit/Loss:   {:<9}".format(
+            profitDsp))
     print("*********************************************************************************************************")
 
 
@@ -455,35 +484,51 @@ def pr_comp_dr_fin_tbl():
         print()
 
 
+def auto_mon_stand_fee():
+    dflt = open("defaults.dat", "r")
+    NEXT_TRANS_NUM = int(dflt.readline())
+    NEXT_DRIVER_NUM = int(dflt.readline())
+    MON_STAND_FEE = float(dflt.readline())
+    DAILY_RENT = float(dflt.readline())
+    WEEKLY_RENT = float(dflt.readline())
+    TAX_RATE = float(dflt.readline())
+    dflt.close()
+
+    hstAmt = MON_STAND_FEE * (TAX_RATE)
+    total = MON_STAND_FEE + hstAmt
+    dflt.close()
+
+    with open("employees.dat", "r") as emp, open("revenues.dat", "a+") as rev, open("defaults.dat", "w") as dflt:
+        for line in emp:
+            empLine = line.split(",")
+            driverNum = empLine[0]
+            newRevLine = "{}, {}, Monthly Stand Fees, {}, {}, {}, {}".format(NEXT_TRANS_NUM, todayDate, driverNum,
+                                                                             MON_STAND_FEE, hstAmt, total)
+            NEXT_TRANS_NUM += 1
+            rev.write("{}\n".format(newRevLine))
+
+        dflt.write("{}\n".format(NEXT_TRANS_NUM))
+        dflt.write("{}\n".format(NEXT_DRIVER_NUM))
+        dflt.write("{}\n".format(MON_STAND_FEE))
+        dflt.write("{}\n".format(DAILY_RENT))
+        dflt.write("{}\n".format(WEEKLY_RENT))
+        dflt.write("{}\n".format(TAX_RATE))
+    autoChargeCompleted = True
+
+
+autoChargeCompleted = False
+
+# MAIN MENU
 while True:
     # Charge Drivers Standard Fee on 1st
-    # todayDate = dt.datetime.today()
-    # todayDate = input("Enter date: ")
-    # todayDate = dt.datetime.strptime(todayDate, "%Y-%m-%d")
-    # if todayDate.day == 1:
-    #     todayDate = dt.datetime.strftime(todayDate, "%Y-%m-%d")
-    #     tax = MON_STAND_FEE * TAX_RATE
-    #     total = MON_STAND_FEE + tax
-    #
-    #     with open("revenue.dat", "a") as f:
-    #         f.write("{},".format(str(NEXT_TRANS_NUM)))
-    #         f.write("{},".format(str(todayDate)))
-    #         f.write("{},".format("Monthly Stand Fees"))
-    #         f.write("{},".format(str(NEXT_DRIVER_NUM)))
-    #         f.write("{},".format(str(MON_STAND_FEE)))
-    #         f.write("{},".format(str(tax)))
-    #         f.write("{},".format(str(total)))
-    #
-    # NEXT_TRANS_NUM += 1
-    # NEXT_DRIVER_NUM += 1
-    #
-    # with open("defaults.dat", "w") as f:
-    #     f.write("{}\n".format(str(NEXT_TRANS_NUM)))
-    #     f.write("{}\n".format(str(NEXT_DRIVER_NUM)))
-    #     f.write("{}\n".format(str(MON_STAND_FEE)))
-    #     f.write("{}\n".format(str(DAILY_RENT)))
-    #     f.write("{}\n".format(str(WEEKLY_RENT)))
-    #     f.write("{}\n".format(str(TAX_RATE)))
+
+    # Get todays date
+    todayDate = "2022-01-01"
+    todayDate = dt.datetime.strptime(todayDate, '%Y-%m-%d').date()
+
+    # Perform auto-charge if it's the 1st of the month
+    if todayDate.day == 1 and autoChargeCompleted == False:
+        auto_mon_stand_fee()
 
     # Main
 
