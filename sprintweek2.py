@@ -6,7 +6,9 @@
 
 import datetime as dt
 
-
+# This function formats a numerical value to display as a dollar value.
+# The numerical value that will be formatted (int/float).
+# Returns the numerical value as a string, formatted to look like a dollar value.
 def Dollar(num):
     dollar = "${:,.2f}".format(num)
     return dollar
@@ -314,7 +316,6 @@ def pr_comp_profit_tbl():
                 tranCounter += 1
                 # Total Revenue
                 totalRevAcc += revTotal
-                totalRevAccDsp = Dollar(totalRevAcc)
 
                 print("            {:<10}      {:<3}       {:>4}     {:<10}   {:>9}      {:>6}  {:>9}".format(transDate,
                                                                                                               transID,
@@ -324,22 +325,18 @@ def pr_comp_profit_tbl():
                                                                                                               revTaxDsp,
                                                                                                               revTotalDsp))
             else:
-                tranCounter = 0
-                # Total Revenue
-                totalRevAcc += revTotal
-                totalRevAccDsp = Dollar(totalRevAcc)
+                # Add nothing to counters and accumulators if not within date range
+                totalRevAcc += 0
 
-                print("            {:<10}      {:<3}       {:>4}     {:<10}   {:>9}      {:>6}  {:>9}".format(transDate,
-                                                                                                              transID,
-                                                                                                              revDriverNum,
-                                                                                                              revDesc,
-                                                                                                              revAmtDsp,
-                                                                                                              revTaxDsp,
-                                                                                                              revTotalDsp))
+        totalRevAccDsp = Dollar(totalRevAcc)
+
+        if tranCounter == 0:
+            print("{:^104}".format("N/A"))
+
 
         print("======================================================================================================")
         print(
-            "TOTAL TRANSACTIONS: {:<3}                                                     TOTAL REVENUE:   {:<6}".format
+            "TOTAL TRANSACTIONS: {:<3}                                                TOTAL REVENUE:    {:>11}".format
             (tranCounter, totalRevAccDsp))
         print("              Monthly Standard Trans: {:<3}   Daily Rent Trans: {:<3}  Weekly Rent Trans: {:>3}".format(
             monFeeCounter, dailyFeeCounter, weekFeeCounter))
@@ -376,7 +373,6 @@ def pr_comp_profit_tbl():
                 invoiceCounter += 1
                 # Total Expenses
                 totalExpenAcc += expenTotal
-                totalExpenAccDsp = Dollar(totalExpenAcc)
 
                 print(
                     "           {:<10}  {:<5}    {:<4}     {:<5}    {:<10}  {:<9} {:>2}   {:<9} {:<9}{:<9}".format(
@@ -387,6 +383,12 @@ def pr_comp_profit_tbl():
                         quantity, subtotalDsp,
                         expenTaxDsp,
                         expenTotalDsp))
+            else:
+                # If not inside date range, add nothing to the accumulator
+                totalExpenAcc += 0
+
+            # Dsp for expense accumulator
+            totalExpenAccDsp = Dollar(totalExpenAcc)
 
         # Profit/Loss
         profit = totalRevAcc - totalExpenAcc
@@ -394,16 +396,28 @@ def pr_comp_profit_tbl():
         # Dsp For Profit/Loss
         profitDsp = Dollar(profit)
 
-    print("========================================================================================================")
+    if invoiceCounter == 0:
+        print("{:^104}".format("N/A"))
+
+
+
+    print("=======================================================================================================")
     print(
-        "TOTAL INVOICES: {:<3}                                                             TOTAL EXPENSES: {:<9}".format(
+        "TOTAL INVOICES: {:<3}                                                       TOTAL EXPENSES:   {:>11}".format(
             invoiceCounter, totalExpenAccDsp))
     print()
-    print("*********************************************************************************************************")
-    print(
-        "                                                                                 Profit/Loss:   {:<9}".format(
-            profitDsp))
-    print("*********************************************************************************************************")
+    print("*******************************************************************************************************")
+    if profit >= 0:
+        print(
+            "                                                                                  Profit:   {:>11}".format(
+                profitDsp))
+        print(
+            "*******************************************************************************************************")
+    else:
+        print(
+            "                                                                                    Loss:   {:>11}".format(
+                profitDsp))
+        print("*******************************************************************************************************")
 
 
 def pr_comp_dr_fin_tbl():
@@ -463,22 +477,30 @@ def pr_comp_dr_fin_tbl():
 
             if driveNum == revDriverNum and transDateDsp >= startDate and transDateDsp <= endDate:
                 tranCounter += 1
-                # Amount, HST, and Total Accumulators
+                # # Amount, HST, and Total Accumulators
                 amtAcc += revAmt
                 HSTAcc += revTax
                 totalAcc += revTotal
 
-                # Dsp For Accumulators
-                amtAccDsp = Dollar(amtAcc)
-                HSTAccDsp = Dollar(HSTAcc)
-                totalAccDSp = Dollar(totalAcc)
 
                 print("{:<10}     {:<3}   {:>10} {:>9}       {:>6}     {:>9}".format(transDate, transID, revDesc,
                                                                                      revAmtDsp,
                                                                                      revTaxDsp, revTotalDsp))
+            else:
+                # Amount, HST, and Total Accumulators
+                amtAcc += 0
+                HSTAcc += 0
+                totalAcc += 0
 
+                # Dsp For Accumulators
+
+            amtAccDsp = Dollar(amtAcc)
+            HSTAccDsp = Dollar(HSTAcc)
+            totalAccDSp = Dollar(totalAcc)
+        if tranCounter == 0:
+            print("{:^76}".format("N/A"))
         print("============================================================================")
-        print("TOTAL TRANSACTIONS: {:<2}                  {:>9}    {:>9}     {:>9}".format
+        print("TOTAL TRANSACTIONS: {:<2}                  {:>9}    {:>9}   {:>11}".format
               (tranCounter, amtAccDsp, HSTAccDsp, totalAccDSp))
 
         print()
